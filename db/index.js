@@ -114,12 +114,12 @@ async function getUserByUsername(username) {
       [username]
     );
 
-    if (!user) {
-      throw {
-        name: "UserNotFoundError",
-        message: "A user with that username does not exist",
-      };
-    }
+    // if (!user) {
+    //   throw {
+    //     name: "UserNotFoundError",
+    //     message: "A user with that username does not exist",
+    //   };
+    // }
 
     return user;
   } catch (error) {
@@ -202,6 +202,20 @@ async function updatePost(postId, fields = {}) {
     return await getPostById(postId);
   } catch (error) {
     throw error;
+  }
+}
+
+async function deletePost(postId) {
+  try {
+    const {
+      rows: [post],
+    } = await client.query(`DELETE FROM posts WHERE id=$1 RETURNING *`, [
+      postId,
+    ]);
+    console.log(post);
+    return post;
+  } catch (error) {
+    console.log(err);
   }
 }
 
@@ -317,7 +331,7 @@ async function getPostsByTagName(tagName) {
 
 async function createTags(tagList) {
   if (tagList.length === 0) {
-    return;
+    return tagList;
   }
 
   const valuesStringInsert = tagList
@@ -414,4 +428,5 @@ module.exports = {
   getAllTags,
   createPostTag,
   addTagsToPost,
+  deletePost,
 };
